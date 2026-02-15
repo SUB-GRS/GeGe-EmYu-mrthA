@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinzo API Dashboard</title>
+    <link rel="stylesheet" href="global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dinzo <span class="highlight">API System</span></h1>
+            <p>Pemantauan rute otomatis secara real-time</p>
+        </header>
+
+        <main>
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <span class="label">Total Endpoints</span>
+                    <span id="count" class="value">0</span>
+                </div>
+                <div class="stats-card">
+                    <span class="label">Server Status</span>
+                    <span class="value status-online">Active</span>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Cari endpoint atau kategori..." autocomplete="off">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Category</th>
+                            <th>Endpoint URL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="endpoint-list">
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
