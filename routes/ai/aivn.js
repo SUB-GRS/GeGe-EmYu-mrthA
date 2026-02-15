@@ -76,7 +76,7 @@ async function getAudioMP3(text) {
     const data = qs.stringify({
         lang: 'indonesian',
         text: text,
-        voiceId: 'fr-FR-VivienneMultilingualNeural'
+        voiceId: 'id-ID-ArdiNeural' 
     });
 
     const response = await axios.post(url, data, {
