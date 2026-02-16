@@ -3,14 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dinzo API Dashboard</title>
+    <title>Edi API Dashboard</title>
     <link rel="stylesheet" href="global.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
+        <div class="video-preview-container">
+            <video id="headerVideo" autoplay muted playsinline>
+                <source src="https://files.catbox.moe/i828eh.mp4" type="video/mp4">
+            </video>
+            <div class="video-overlay"></div>
+        </div>
+
         <header>
-            <h1>Dinzo <span class="highlight">API System</span></h1>
+            <h1>Edi <span class="highlight">API System</span></h1>
             <p>Pemantauan rute otomatis secara real-time</p>
         </header>
 
@@ -22,27 +29,16 @@
                 </div>
                 <div class="stats-card">
                     <span class="label">Server Status</span>
-                    <span class="value status-online">Active</span>
+                    <span class="value status-online">● Active</span>
                 </div>
             </div>
 
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Cari endpoint atau kategori..." autocomplete="off">
+                <input type="text" id="searchInput" placeholder="Cari endpoint (contoh: gemini, tiktok)..." autocomplete="off">
             </div>
 
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Method</th>
-                            <th>Category</th>
-                            <th>Endpoint URL</th>
-                        </tr>
-                    </thead>
-                    <tbody id="endpoint-list">
-                    </tbody>
-                </table>
-            </div>
+            <div id="endpoint-grid" class="endpoint-grid">
+                </div>
         </main>
     </div>
     <script src="script.js"></script>
