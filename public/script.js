@@ -1,48 +1,60 @@
-let allEndpoints = [];
+const startBtn = document.getElementById('startBtn');
+const landing = document.getElementById('landing-page');
+const dashboard = document.getElementById('main-dashboard');
+const liquid = document.getElementById('liquid-layer');
 
+startBtn.addEventListener('click', () => {
+    // 1. Jalankan animasi air (Liquid)
+    liquid.classList.add('active');
+    
+    // 2. Geser landing page ke kiri
+    landing.style.transform = 'translateX(-100%)';
+
+    setTimeout(() => {
+        // 3. Tampilkan dashboard dan hilangkan landing dari DOM flow
+        landing.classList.add('hidden');
+        dashboard.classList.remove('hidden');
+        
+        // Trigger opacity fade in
+        setTimeout(() => {
+            dashboard.classList.add('show');
+            loadDashboard(); // Load data API
+        }, 50);
+    }, 600); // Sinkron dengan durasi transisi CSS
+});
+
+// LOAD DATA API (Sesuai app.js lu)
 async function loadDashboard() {
     try {
         const res = await fetch('/api-stats');
-        if (!res.ok) throw new Error("Gagal mengambil data stats");
-        
-        allEndpoints = await res.json();
-        renderTable(allEndpoints);
-    } catch (e) {
-        console.error("[Edi Dashboard Error]:", e);
-        document.getElementById('endpoint-list').innerHTML = `<tr><td colspan="3" style="text-align:center; color:red;">Gagal memuat data: ${e.message}</td></tr>`;
-    }
+        const data = await res.json();
+        const grid = document.getElementById('endpoint-grid');
+        document.getElementById('count').innerText = data.length;
+        grid.innerHTML = '';
+
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'endpoint-card';
+            card.onclick = () => window.open(item.path, '_blank');
+            card.innerHTML = `
+                <div>
+                    <h3 style="margin:0; font-size:1rem;">${item.name}</h3>
+                    <p style="margin:4px 0 0; font-family:'JetBrains Mono'; font-size:0.75rem; color:#2563eb;">${item.path}</p>
+                </div>
+                <span class="cat-tag">${item.category}</span>
+            `;
+            grid.appendChild(card);
+        });
+    } catch (e) { console.error(e); }
 }
 
-function renderTable(data) {
-    const list = document.getElementById('endpoint-list');
-    const countDisplay = document.getElementById('count');
-    
-    if (countDisplay) countDisplay.innerText = data.length;
-    
-    list.innerHTML = data.map(item => {
-        const category = item.category || "General";
-        const methodClass = `badge-${item.method.toLowerCase()}`;
-        
-        return `
-            <tr>
-                <td><span class="badge ${methodClass}">${item.method}</span></td>
-                <td class="cat-name">${category}</td>
-                <td><a href="${item.path}" target="_blank" class="url-link">${item.path}</a></td>
-            </tr>
-        `;
-    }).join('');
+// TOGGLE MENU
+const menuBtn = document.getElementById('menuBtn');
+const dropdownMenu = document.getElementById('dropdownMenu');
+if(menuBtn) {
+    menuBtn.onclick = (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('show');
+    };
+    document.onclick = () => dropdownMenu.classList.remove('show');
 }
-
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    const keyword = e.target.value.toLowerCase();
-    
-    const filtered = allEndpoints.filter(item => {
-        const category = (item.category || "").toLowerCase();
-        const path = (item.path || "").toLowerCase();
-        return category.includes(keyword) || path.includes(keyword);
-    });
-    
-    renderTable(filtered);
-});
-
-loadDashboard();
