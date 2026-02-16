@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinzo API System</title>
+    <link rel="stylesheet" href="global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="liquid-layer"></div>
+
+    <div id="landing-page">
+        <div class="landing-content">
+            <div class="logo-circle">
+                <span>E</span>
+            </div>
+            <h1>Dinzo <span class="gradient-text">API System</span></h1>
+            <p class="subtitle">Modern endpoint management with real-time logging</p>
+            <button class="btn-start" id="startBtn">
+                <span>Get Started</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+            <div class="features">
+                <div class="feature-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Fast & Reliable</span>
+                </div>
+                <div class="feature-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Real-time Monitoring</span>
+                </div>
+                <div class="feature-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Easy Integration</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main id="main-dashboard" class="hidden">
+        <div class="container">
+            <div class="video-preview-container">
+                <div class="menu-wrapper">
+                    <button class="menu-btn" id="menuBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="https://t.me/7925179886" target="_blank">
+                            <span>✈️</span>
+                            <span>Telegram Contact</span>
+                        </a>
+                        <a href="https://whatsapp.com/channel/your-id" target="_blank">
+                            <span>📢</span>
+                            <span>WhatsApp Channel</span>
+                        </a>
+                    </div>
+                </div>
+                <video id="headerVideo" autoplay muted playsinline loop>
+                    <source src="https://files.catbox.moe/i828eh.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay"></div>
+            </div>
+
+            <header class="dash-header">
+                <h1>Dinzo <span class="gradient-text">API System</span></h1>
+                <p class="dash-subtitle">Manage and monitor your API endpoints</p>
+                <div class="status-pill-container">
+                    <div class="status-pill">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                        <span id="count">0</span> Endpoints
+                    </div>
+                    <div class="status-pill online">
+                        <span class="dot"></span>
+                        System Active
+                    </div>
+                </div>
+            </header>
+
+            <div class="search-box">
+                <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search API routes...">
+            </div>
+
+            <div id="endpoint-grid" class="endpoint-grid"></div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
