@@ -1,48 +1,65 @@
 let allEndpoints = [];
 
+const video = document.getElementById('headerVideo');
+
+if (video) {
+    video.currentTime = 2;
+
+    video.addEventListener('timeupdate', function() {
+        const buffer = 0.3;
+        if (this.currentTime > this.duration - buffer) {
+            this.currentTime = 5; 
+            this.play();
+        }
+    });
+}
+
 async function loadDashboard() {
     try {
         const res = await fetch('/api-stats');
-        if (!res.ok) throw new Error("Gagal mengambil data stats");
-        
         allEndpoints = await res.json();
-        renderTable(allEndpoints);
+        renderCards(allEndpoints);
     } catch (e) {
-        console.error("[Edi Dashboard Error]:", e);
-        document.getElementById('endpoint-list').innerHTML = `<tr><td colspan="3" style="text-align:center; color:red;">Gagal memuat data: ${e.message}</td></tr>`;
+        console.error("Dashboard Error:", e);
     }
 }
 
-function renderTable(data) {
-    const list = document.getElementById('endpoint-list');
-    const countDisplay = document.getElementById('count');
-    
-    if (countDisplay) countDisplay.innerText = data.length;
-    
-    list.innerHTML = data.map(item => {
-        const category = item.category || "General";
-        const methodClass = `badge-${item.method.toLowerCase()}`;
+function renderCards(data) {
+    const grid = document.getElementById('endpoint-grid');
+    document.getElementById('count').innerText = data.length;
+    grid.innerHTML = '';
+
+    data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'endpoint-card';
+        card.onclick = () => window.open(item.path, '_blank');
         
-        return `
-            <tr>
-                <td><span class="badge ${methodClass}">${item.method}</span></td>
-                <td class="cat-name">${category}</td>
-                <td><a href="${item.path}" target="_blank" class="url-link">${item.path}</a></td>
-            </tr>
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="badge-method">${item.method}</span>
+                <span class="badge-output">${item.output || 'JSON'}</span>
+            </div>
+            <div>
+                <h3>${item.name}</h3>
+                <p>${item.path}</p>
+            </div>
+            <div class="card-footer">
+                <span class="cat-label">${item.category}</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </div>
         `;
-    }).join('');
+        grid.appendChild(card);
+    });
 }
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
     const keyword = e.target.value.toLowerCase();
-    
-    const filtered = allEndpoints.filter(item => {
-        const category = (item.category || "").toLowerCase();
-        const path = (item.path || "").toLowerCase();
-        return category.includes(keyword) || path.includes(keyword);
-    });
-    
-    renderTable(filtered);
+    const filtered = allEndpoints.filter(item => 
+        item.name.toLowerCase().includes(keyword) || 
+        item.path.toLowerCase().includes(keyword) ||
+        item.category.toLowerCase().includes(keyword)
+    );
+    renderCards(filtered);
 });
 
 loadDashboard();
