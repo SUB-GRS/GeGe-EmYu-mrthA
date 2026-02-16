@@ -88,6 +88,7 @@ function loadRoutes(dir, baseRoute = '') {
             const route = require(fullPath);
             const routeName = file.split('.')[0];
             
+            // Perbaikan Logika Kategori: Ambil nama folder induknya
             const categoryName = baseRoute ? baseRoute.split(path.sep).pop() : 'General';
             
             let relativePath = path.join(baseRoute, (routeName === 'index' ? '' : routeName)).replace(/\\/g, '/');
@@ -103,10 +104,8 @@ function loadRoutes(dir, baseRoute = '') {
                 route.stack.forEach((s) => {
                     if (s.route) {
                         const subPath = s.route.path === '/' ? '' : s.route.path;
-                        
-                        // [EDI FIX] Tambahkan properti 'name' agar dashboard tidak Unknown
+                        // [EDI FIX] Pastikan key 'category' dikirim ke dashboard
                         listEndpoints.push({
-                            name: routeName.toUpperCase(), // Mengambil nama file sebagai Nama API
                             method: Object.keys(s.route.methods)[0].toUpperCase(),
                             category: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
                             path: `${mountPath}${subPath}`.replace(/\/+/g, '/')
@@ -114,6 +113,7 @@ function loadRoutes(dir, baseRoute = '') {
                     }
                 });
             }
+            console.log(`[System] ${mountPath} loaded as ${categoryName}`);
         }
     });
 }
