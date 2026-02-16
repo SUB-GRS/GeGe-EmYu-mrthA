@@ -1,5 +1,6 @@
 let allEndpoints = [];
 
+// VIDEO LOOP (0-End-2)
 const video = document.getElementById('headerVideo');
 if (video) {
     video.currentTime = 2;
@@ -17,7 +18,7 @@ async function loadDashboard() {
         allEndpoints = await res.json();
         renderCards(allEndpoints);
     } catch (e) {
-        console.error("Error:", e);
+        console.error("Dashboard Error:", e);
     }
 }
 
@@ -31,16 +32,12 @@ function renderCards(data) {
         card.className = 'endpoint-card';
         card.onclick = () => window.open(item.path, '_blank');
         
-        const name = item.name || "Unknown API";
-        const path = item.path || "/";
-        const category = item.category || "General";
-
         card.innerHTML = `
             <div class="card-info">
-                <h3>${name}</h3>
-                <p>${path}</p>
+                <h3>${item.name}</h3>
+                <p>${item.path}</p>
             </div>
-            <span class="cat-tag">${category}</span>
+            <span class="cat-tag">${item.category}</span>
         `;
         grid.appendChild(card);
     });
