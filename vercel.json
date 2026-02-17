@@ -8,11 +8,21 @@
   ],
   "routes": [
     {
+      "src": "/src/(.*)",
+      "dest": "/src/$1"
+    },
+    {
+      "src": "/openapi.json",
+      "dest": "/openapi.json"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.js"
+      "dest": "index.js"
     }
   ],
-  "env": {
-    "NODE_ENV": "production"
+  "functions": {
+    "index.js": {
+      "includeFiles": "src/**, api-page/**"
+    }
   }
 }
