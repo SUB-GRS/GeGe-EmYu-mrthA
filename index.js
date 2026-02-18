@@ -4,6 +4,7 @@ const fs = require("fs");
 const cors = require("cors");
 const path = require("path");
 const axios = require("axios");
+const rateLimit = require("express-rate-limit"); 
 require("dotenv").config();
 
 const app = express();
@@ -32,16 +33,16 @@ async function sendNotification(msg) {
     await sendTelegram(text);
 }
 
-async function sendLog({ ip, method, endpoint, status, query, duration }) {
-    const icons = { request: "🟡", success: "✅", error: "❌" };
+async function sendLog({ ip, method, endpoint, status, query, duration, reason }) {
+    const icons = { request: "🟡", success: "✅", error: "❌", limit: "🚫" };
     const text = `
-${icons[status]} <b>API ACTIVITY - ${status.toUpperCase()}</b>
+${icons[status] || "ℹ️"} <b>API ACTIVITY - ${status.toUpperCase()}</b>
 ━━━━━━━━━━━━━━━━━━
 👤 <b>IP:</b> <code>${ip}</code>
 📡 <b>Method:</b> <code>${method}</code>
 🛤️ <b>Endpoint:</b> <code>${endpoint}</code>
 ⏱️ <b>Duration:</b> <code>${duration ?? "-"}ms</code>
-⌛ <b>Time:</b> <code>${new Date().toISOString()}</code>
+${reason ? `⚠️ <b>Reason:</b> <code>${reason}</code>\n` : ""}⌛ <b>Time:</b> <code>${new Date().toISOString()}</code>
 
 🛠️ <b>Query:</b>
 <pre>${JSON.stringify(query || {}, null, 2)}</pre>
@@ -51,13 +52,38 @@ ${icons[status]} <b>API ACTIVITY - ${status.toUpperCase()}</b>
 }
 
 // ========== EXPRESS CONFIG ==========
-app.enable("trust proxy");
+app.set("trust proxy", 1);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.set("json spaces", 2);
 
-// Gunakan process.cwd() untuk Vercel Compatibility
+// ========== RATE LIMIT CONFIG ==========
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 100, 
+    standardHeaders: true,
+    legacyHeaders: false,
+    handler: (req, res, next, options) => {
+        const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+        sendLog({
+            ip,
+            method: req.method,
+            endpoint: req.originalUrl,
+            status: "limit",
+            query: req.query,
+            reason: "Rate limit exceeded"
+        });
+        
+        res.status(429).json({
+            status: false,
+            message: "Terlalu banyak request. Silakan coba lagi nanti dalam 15 menit."
+        });
+    }
+});
+
+app.use("/api/", limiter);
+
 const ROOT_DIR = process.cwd();
 
 // ========== STATIC FILES ==========
@@ -105,7 +131,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// ========== ENDPOINT LOGGER ==========
 const endpointStats = {};
 app.use(async (req, res, next) => {
     const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
@@ -119,7 +144,7 @@ app.use(async (req, res, next) => {
     next();
 
     res.on("finish", async () => {
-        if (!isApiEndpoint) return;
+        if (!isApiEndpoint || res.statusCode === 429) return;
         const duration = Date.now() - start;
         const isError = res.statusCode >= 400;
         const status = isError ? "error" : "success";
@@ -133,7 +158,6 @@ app.use(async (req, res, next) => {
     });
 });
 
-// ========== LOAD API ROUTES (FIXED FOR VERCEL) ==========
 let totalRoutes = 0;
 const apiFolder = path.join(ROOT_DIR, "src", "api");
 
@@ -161,7 +185,6 @@ if (fs.existsSync(apiFolder)) {
     }
 }
 
-// ========== MAIN ROUTES ==========
 app.get("/", (req, res) => res.sendFile(path.join(ROOT_DIR, "api-page", "index.html")));
 app.get("/docs", (req, res) => res.sendFile(path.join(ROOT_DIR, "api-page", "docs.html")));
 
@@ -173,9 +196,10 @@ app.use((err, req, res, next) => {
     res.status(500).sendFile(path.join(ROOT_DIR, "api-page", "500.html"));
 });
 
-// Penting untuk Vercel: Export app
 module.exports = app;
 
-app.listen(PORT, () => {
-    console.log(chalk.bgGreen.black(`Server running on port ${PORT}`));
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(chalk.bgGreen.black(`Server running on port ${PORT}`));
+    });
+}
