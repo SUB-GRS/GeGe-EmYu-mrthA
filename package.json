@@ -1,7 +1,7 @@
 {
   "name": "dinzo",
   "version": "1.0.0",
-  "description": "A simple and customizable API documentation interface built with Express.js.",
+  "description": "A simple and customizable API documentat>
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
@@ -19,6 +19,7 @@
     "dotenv": "^16.3.1",
     "express": "^4.19.2",
     "express-fileupload": "^1.5.2",
+    "express-rate-limit": "^7.5.1",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
     "jimp": "^0.16.1",
